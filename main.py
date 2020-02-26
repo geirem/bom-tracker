@@ -1,13 +1,19 @@
 import os
-import requests  # noqa We are just importing this to prove the dependency installed correctly
+import requests
+
+from lib.BlockerChecker import BlockerChecker
+from lib.BomParser import BomParser
 
 
 def main():
-    my_input = os.environ["INPUT_MYINPUT"]
-
-    my_output = f"Hello {my_input}"
-
-    print(f"::set-output name=myOutput::{my_output}")
+    TRACK_TOKEN = os.environ["TRACK_TOKEN"]
+    blocker_file = 'config/blockers.json'
+    bom_file = 'bom.xml'
+    bom_parser = BomParser(bom_file).parse()
+    blocker_checker = BlockerChecker(blocker_file)
+    blockers = blocker_checker.check(bom_parser.get_components())
+    if blockers:
+        raise Exception()
 
 
 if __name__ == "__main__":
