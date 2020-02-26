@@ -20,6 +20,7 @@ class Reporter:
         self.__headers = {
             'X-Api-Key': environ['TRACK_TOKEN'],
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
         }
         self.__project = project
 
@@ -30,18 +31,14 @@ class Reporter:
         with open(bom_file, 'r') as inimage:
             bom_data = base64.b64encode(inimage.read().encode('utf-8')).decode('ascii').replace('\n', '')
         data = {
-            'bom': bom_data[0:100],
+            'bom': bom_data,
             'autoCreate': True,
             'projectVersion': self.__project.get_version(),
             'projectName': self.__project.get_name(),
         }
-        pprint.pprint(data)
         response = requests.put(
-            self.__assemble_url('/project'), data=data, headers=self.__headers
+            self.__assemble_url('/bom'), data=json.dumps(data), headers=self.__headers
         )
-        print(response)
-        print(response.content)
         if 200 <= response.status_code < 300:
             return
         raise TrackCallException()
-
