@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 from lib.Component import Component
 
 
-class BomParser:
+class Bom:
 
     def __init__(self, file: str):
         self.__file = file

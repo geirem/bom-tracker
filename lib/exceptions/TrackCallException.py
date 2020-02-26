@@ -1,0 +1,2 @@
+class TrackCallException(Exception):
+    pass
