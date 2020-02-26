@@ -24,10 +24,7 @@ def check_for_blockers(bom_file: str) -> bool:
 def report_bom(bom_file: str) -> None:
     project = Project()
     reporter = Reporter('http://localhost:8080/api/v1', project)
-    project_key = reporter.find_project_key()
-    if project_key is None:
-        project_key = reporter.create_project()
-    print(project_key)
+    reporter.send_bom(bom_file)
 
 
 def main() -> None:

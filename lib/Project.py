@@ -19,10 +19,10 @@ class Project:
     def get_version(self) -> str:
         return self.__version
 
-    def __is_maven(self) -> bool:
+    @staticmethod
+    def __is_maven() -> bool:
         return path.exists('pom.xml')
 
     @staticmethod
     def __project_from_pom():
         return 'foo', 'bar'
-

@@ -1,4 +1,6 @@
+import base64
 import json
+import pprint
 from os import environ
 from typing import Optional
 
@@ -15,34 +17,31 @@ class Reporter:
         if 'TRACK_TOKEN' not in environ:
             raise ConfigurationException('Access token (TRACK_TOKEN) for dependency tracker not configured.')
         self.__base_url = base_url
-        self.__header = {
+        self.__headers = {
             'X-Api-Key': environ['TRACK_TOKEN'],
+            'Content-Type': 'application/json',
         }
         self.__project = project
 
     def __assemble_url(self, local_part: str) -> str:
         return self.__base_url + local_part
 
-    def find_project_key(self) -> Optional[str]:
-        response = requests.get(
-            self.__assemble_url('/project/lookup'),
-            params={'name': self.__project.get_name(), 'version': self.__project.get_version()},
-            headers=self.__header
+    def send_bom(self, bom_file: str) -> None:
+        with open(bom_file, 'r') as inimage:
+            bom_data = base64.b64encode(inimage.read().encode('utf-8')).decode('ascii').replace('\n', '')
+        data = {
+            'bom': bom_data[0:100],
+            'autoCreate': True,
+            'projectVersion': self.__project.get_version(),
+            'projectName': self.__project.get_name(),
+        }
+        pprint.pprint(data)
+        response = requests.put(
+            self.__assemble_url('/project'), data=data, headers=self.__headers
         )
-        if response.status_code == 404:
-            return None
-        if response.status_code == 200:
-            return response.json().get('uuid')
+        print(response)
+        print(response.content)
+        if 200 <= response.status_code < 300:
+            return
         raise TrackCallException()
 
-    def create_project(self):
-        data = {'name': self.__project.get_name(), 'version': self.__project.get_version()}
-        headers = {**self.__header, **{'Content-Type': 'application/json'}}
-        response = requests.put(
-            self.__assemble_url('/project'), data=json.dumps(data), headers=headers
-        )
-        if response.status_code == 404:
-            return None
-        if response.status_code == 201:
-            return response.json().get('uuid')
-        raise TrackCallException()
