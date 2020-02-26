@@ -1,5 +1,4 @@
 import json
-from typing import List
 
 from lib.Component import Component
 
@@ -15,7 +14,7 @@ class BlockerChecker:
             blocked_list = json.load(inimage)
             for blocked in blocked_list:
                 component = Component(blocked['jurl'])
-                self.__blocked[component.get_key()] = component
+                self.__blocked[component.get_ref()] = component
 
     def check(self, components: list) -> list:
-        return [x for x in components if x.get_key() in self.__blocked]
+        return [x for x in components if x.get_ref() in self.__blocked]

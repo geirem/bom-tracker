@@ -1,4 +1,5 @@
 import os
+
 import requests
 
 from lib.BlockerChecker import BlockerChecker
@@ -13,6 +14,7 @@ def main():
     blocker_checker = BlockerChecker(blocker_file)
     blockers = blocker_checker.check(bom_parser.get_components())
     if blockers:
+        print(blockers)
         raise Exception()
 
 
