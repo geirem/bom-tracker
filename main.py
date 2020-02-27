@@ -27,11 +27,15 @@ def report_bom(bom_file: str) -> None:
     reporter.send_bom(bom_file)
 
 
+# Only positive finds in the blocking file should break the build.  All other errors are suppressed.
 def main() -> None:
     bom_file = 'bom.xml'
     if not check_for_blockers(bom_file):
         exit(1)
-    report_bom(bom_file)
+    try:
+        report_bom(bom_file)
+    except Exception as err:
+        print(err)
 
 
 if __name__ == "__main__":

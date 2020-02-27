@@ -1,8 +1,6 @@
 import base64
 import json
-import pprint
 from os import environ
-from typing import Optional
 
 import requests as requests
 
@@ -45,7 +43,7 @@ class Reporter:
         )
         if response.status_code == 201:
             return
-        raise TrackCallException()
+        raise TrackCallException(f'Unable to create new project: {response.status_code}.')
 
     def send_bom(self, bom_file: str) -> None:
         with open(bom_file, 'r') as inimage:
@@ -61,4 +59,4 @@ class Reporter:
         )
         if 200 <= response.status_code < 300:
             return
-        raise TrackCallException()
+        raise TrackCallException(f'Unable to send bom: {response.status_code}.')
