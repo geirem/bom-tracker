@@ -1,3 +1,4 @@
+import os
 import pprint
 
 from lib.BlockerChecker import BlockerChecker
@@ -30,6 +31,10 @@ def report_bom(bom_file: str) -> None:
 # Only positive finds in the blocking file should break the build.  All
 # other errors are suppressed.
 def main() -> None:
+    print('ls:')
+    for f in os.listdir("path"):
+        print(f'\t{f}')
+    print(f'cwd: {os.getcwd()}')
     bom_file = 'bom.xml'
     if not check_for_blockers(bom_file):
         exit(1)

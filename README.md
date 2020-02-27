@@ -1,37 +1,32 @@
 # OWASP Dependency Track Integration
-
-_The rest of this README is from the template.  TODO: fix this :)_
-
-
-This is a template for creating GitHub actions and contains a small Python application which will be built into a minimal [Container Action](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-a-docker-container-action). Our final container from this template is ~50MB, yours may be a little bigger once you add some code. If you want something smaller check out my [go-container-action template](https://github.com/jacobtomlinson/go-container-action/actions).
-
-In `main.py` you will find a small example of accessing Action inputs and returning Action outputs. For more information on communicating with the workflow see the [development tools for GitHub Actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions).
-
-> 🏁 To get started, click the `Use this template` button on this repository [which will create a new repository based on this template](https://github.blog/2019-06-06-generate-new-repositories-with-repository-templates/).
-
 ## Usage
 
-Describe how to use your action here.
+TODO
 
 ### Example workflow
 
 ```yaml
-name: My Workflow
-on: [push, pull_request]
+name: Application Build
+on: push
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: Run action
-
-      # Put your action repo here
-      uses: me/myaction@master
-
-      # Put an example of your mandatory inputs here
-      with:
-        myInput: world
+    - uses: actions/checkout@v2
+#    - name: Create BoM Maven
+#      run: |
+#        mvn org.cyclonedx:cyclonedx-maven-plugin:1.6.4:makeAggregateBom
+    - name: Create BoM Python
+      run: |
+        pip install cyclonedx-bom
+        cyclonedx-py
+    - uses: geirem/bom-tracker@master
+      env:
+        TRACK_TOKEN: ${{ secrets.TRACK_TOKEN }}
 ```
+
+_The rest of this README is from the template.  TODO: fix this :)_
+
 
 ### Inputs
 
@@ -68,10 +63,8 @@ Show people how to use your outputs in another action.
 steps:
 - uses: actions/checkout@master
 - name: Run action
-  id: myaction
-
-  # Put your action name here
-  uses: me/myaction@master
+  id: create_bom
+  uses:  geirem/bom-tracker@master
 
   # Put an example of your mandatory arguments here
   with:
