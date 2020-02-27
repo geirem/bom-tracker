@@ -1,11 +1,11 @@
 [
   {
-    "jurl": "strys.file",
+    "purl": "strys.file",
     "cpe": "*:",
     "name": "strutsy mcstrutsface"
   },
   {
-    "jurl": "--pkg:maven/com.newrelic.agent.java/newrelic-api@4.12.1?type=jar",
+    "purl": "--pkg:maven/com.newrelic.agent.java/newrelic-api@4.12.1?type=jar",
     "cpe": "cpe:2.3:a:newrelic:*:4.12.1:*:*:*:*:*:*:*",
     "name": "newrelic-api",
     "version": "4.12.1",

@@ -19,10 +19,12 @@ class Bom:
         }
         tree = ET.parse(self.__file)
         root = tree.getroot()
-        components = root.find('cyclone11:components', ns)
-        version = 'cyclone11' if components else 'cyclone10'
-        for bom_component in root.find(f'{version}:components', ns).findall(f'{version}:component', ns):
-            component = Component(bom_component.attrib['bom-ref'])
-            component.set_name(bom_component.get('name'))
+        version = 'cyclone11' if root.find('cyclone11:components', ns) else 'cyclone10'
+        bom_components = root.find(f'{version}:components', ns)
+        for bom_component in bom_components.findall(f'{version}:component', ns):
+            purl = bom_component.find(f'{version}:purl', ns).text
+            component = Component(purl)
+            component.set_name(bom_component.find(f'{version}:name', ns).text)
+            component.set_version(bom_component.find(f'{version}:version', ns).text)
             self.__components.append(component)
         return self

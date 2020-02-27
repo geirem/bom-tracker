@@ -1,12 +1,17 @@
 import base64
 import json
 from os import environ
+import logging
 
 import requests as requests
 
 from lib.Project import Project
 from lib.exceptions.ConfigurationException import ConfigurationException
 from lib.exceptions.TrackCallException import TrackCallException
+
+
+# TODO: REMOVE TEST SCAFFOLDING.
+logging.basicConfig(level=logging.DEBUG)
 
 
 class Reporter:
@@ -32,13 +37,17 @@ class Reporter:
             'name': self.__project.get_name(),
             'version': self.__project.get_version(),
         }
-        response = requests.put(
+        response = requests.get(
             self.__assemble_url('/project/lookup'),
-            data=data,
+            params=data,
             headers=self.__headers
         )
         if response.status_code == 200:
             return
+        if response.status_code != 404:
+            raise TrackCallException(
+                f'Unable to verify project status: {response.status_code}.'
+            )
         data['tags'] = [
             {'name': 'untracked_dependencies'}
         ]

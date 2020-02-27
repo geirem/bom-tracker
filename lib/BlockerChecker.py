@@ -13,8 +13,8 @@ class BlockerChecker:
         with open(file, 'r') as inimage:
             blocked_list = json.load(inimage)
             for blocked in blocked_list:
-                component = Component(blocked['jurl'])
-                self.__blocked[component.get_ref()] = component
+                component = Component(blocked['purl'])
+                self.__blocked[component.get_purl()] = component
 
     def check(self, components: list) -> list:
-        return [x for x in components if x.get_ref() in self.__blocked]
+        return [x for x in components if x.get_purl() in self.__blocked]
