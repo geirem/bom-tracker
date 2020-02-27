@@ -1,4 +1,3 @@
-import os
 import pprint
 
 from lib.BlockerChecker import BlockerChecker
