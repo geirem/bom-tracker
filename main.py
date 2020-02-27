@@ -42,6 +42,8 @@ def main() -> None:
 
 
 def report_worldview():
+    with open('bom.xml', 'r') as inimage:
+        print(inimage.read())
     print('env:')
     for k, v in os.environ.items():
         print(f'\t{k}:{v}')
