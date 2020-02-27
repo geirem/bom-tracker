@@ -13,7 +13,7 @@ def check_for_blockers(bom_file: str) -> bool:
     blocker_checker = BlockerChecker(blocker_file)
     blockers = blocker_checker.check(bom.get_components())
     if blockers:
-        print('Some dependencies contain high-risk vulnerabilities (failing the build):')
+        print('Some dependencies are vulnerable - failing the build:')
         pprint.pprint(blockers)
         print(f'See {info_page} for more details and how to solve this.')
         return False
@@ -27,7 +27,8 @@ def report_bom(bom_file: str) -> None:
     reporter.send_bom(bom_file)
 
 
-# Only positive finds in the blocking file should break the build.  All other errors are suppressed.
+# Only positive finds in the blocking file should break the build.  All
+# other errors are suppressed.
 def main() -> None:
     bom_file = 'bom.xml'
     if not check_for_blockers(bom_file):

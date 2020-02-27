@@ -13,7 +13,9 @@ class Reporter:
 
     def __init__(self, base_url: str, project: Project):
         if 'TRACK_TOKEN' not in environ:
-            raise ConfigurationException('Access token (TRACK_TOKEN) for dependency tracker not configured.')
+            raise ConfigurationException(
+                'Token (TRACK_TOKEN) for dependency tracker missing.'
+            )
         self.__base_url = base_url
         self.__headers = {
             'X-Api-Key': environ['TRACK_TOKEN'],
@@ -31,7 +33,9 @@ class Reporter:
             'version': self.__project.get_version(),
         }
         response = requests.put(
-            self.__assemble_url('/project/lookup'), data=data, headers=self.__headers
+            self.__assemble_url('/project/lookup'),
+            data=data,
+            headers=self.__headers
         )
         if response.status_code == 200:
             return
@@ -39,15 +43,21 @@ class Reporter:
             {'name': 'untracked_dependencies'}
         ]
         response = requests.put(
-            self.__assemble_url('/project'), data=json.dumps(data), headers=self.__headers
+            self.__assemble_url('/project'),
+            data=json.dumps(data),
+            headers=self.__headers
         )
         if response.status_code == 201:
             return
-        raise TrackCallException(f'Unable to create new project: {response.status_code}.')
+        raise TrackCallException(
+            f'Unable to create new project: {response.status_code}.'
+        )
 
     def send_bom(self, bom_file: str) -> None:
         with open(bom_file, 'r') as inimage:
-            bom_data = base64.b64encode(inimage.read().encode('utf-8')).decode('ascii').replace('\n', '')
+            bom_data = base64.b64encode(
+                inimage.read().encode('utf-8')
+            ).decode('ascii').replace('\n', '')
         data = {
             'bom': bom_data,
             'autoCreate': True,
@@ -55,7 +65,9 @@ class Reporter:
             'projectName': self.__project.get_name(),
         }
         response = requests.put(
-            self.__assemble_url('/bom'), data=json.dumps(data), headers=self.__headers
+            self.__assemble_url('/bom'),
+            data=json.dumps(data),
+            headers=self.__headers
         )
         if 200 <= response.status_code < 300:
             return
