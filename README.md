@@ -1,21 +1,21 @@
 # OWASP Dependency Track Integration
 ## Usage
 
-TODO
+A BoM integration for [OWASP Dependency Track](https://dependencytrack.org/).  It
+* produces a pom from 
 
-### Example workflow
+### Example workflow for Python projects
 
 ```yaml
-name: Application Build
-on: push
 jobs:
-  build:
+  dependencies:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-#    - name: Create BoM Maven
-#      run: |
-#        mvn org.cyclonedx:cyclonedx-maven-plugin:1.6.4:makeAggregateBom
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
     - name: Create BoM Python
       run: |
         pip install cyclonedx-bom
@@ -23,55 +23,27 @@ jobs:
     - uses: geirem/bom-tracker@master
       env:
         TRACK_TOKEN: ${{ secrets.TRACK_TOKEN }}
+        TRACK_INFO_PAGE: https://github.com/geirem/econokindle/security/advisories
+        TRACK_HOST: https://track.example.net
 ```
 
-_The rest of this README is from the template.  TODO: fix this :)_
+### Example workflow for Java projects
+Details TBD.  You need to run
+```
+mvn org.cyclonedx:cyclonedx-maven-plugin:1.6.4:makeAggregateBom
+```
+to create a BoM.  The rest is similar to Python.
 
-
-### Inputs
+## Inputs
 
 | Input                                             | Description                                        |
 |------------------------------------------------------|-----------------------------------------------|
-| `myInput`  | An example mandatory input    |
-| `anotherInput` _(optional)_  | An example optional input    |
+| `bom.xml` (file)  | A BoM file on [CycloneDX](https://cyclonedx.org/) format.  Versions 1.0 and 1.1 are currently supported.   |
+| `pom.xml` _(file, optional)_  | A Maven POM, to supply project coordinates.  If not present, the repo and build info is used.   |
+| `TRACK_TOKEN` (env)  | Configured as a GitHub secret, the access token to Dependency Track.   |
+| `TRACK_HOST` (env)  | The host name of your instance of Dependency Track.   |
+| `TRACK_INFO_PAGE` _(env, optional)_  | A page to link to when breaking the build due to critical vulnerabilities.    |
 
-### Outputs
-
-| Output                                             | Description                                        |
-|------------------------------------------------------|-----------------------------------------------|
-| `myOutput`  | An example output (returns 'Hello world')    |
-
-## Examples
-
-> NOTE: People ❤️ cut and paste examples. Be generous with them!
-
-### Using the optional input
-
-This is how to use the optional input.
-
-```yaml
-with:
-  myInput: world
-  anotherInput: optional
-```
-
-### Using outputs
-
-Show people how to use your outputs in another action.
-
-```yaml
-steps:
-- uses: actions/checkout@master
-- name: Run action
-  id: create_bom
-  uses:  geirem/bom-tracker@master
-
-  # Put an example of your mandatory arguments here
-  with:
-    myInput: world
-
-# Put an example of using your outputs here
-- name: Check outputs
-    run: |
-    echo "Outputs - ${{ steps.myaction.outputs.myOutput }}"
-```
+## Outputs
+Successful builds produce no output, but create a project, or update its BoM, in
+Dependency Track.
