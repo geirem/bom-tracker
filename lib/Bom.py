@@ -13,10 +13,15 @@ class Bom:
         return self.__components
 
     def parse(self):
-        ns = {'cyclone': 'http://cyclonedx.org/schema/bom/1.1'}
+        ns = {
+            'cyclone10': 'http://cyclonedx.org/schema/bom/1.0',
+            'cyclone11': 'http://cyclonedx.org/schema/bom/1.1',
+        }
         tree = ET.parse(self.__file)
         root = tree.getroot()
-        for bom_component in root.find('cyclone:components', ns).findall('cyclone:component', ns):
+        components = root.find('cyclone11:components', ns)
+        version = 'cyclone11' if components else 'cyclone10'
+        for bom_component in root.find(f'{version}:components', ns).findall(f'{version}:component', ns):
             component = Component(bom_component.attrib['bom-ref'])
             component.set_name(bom_component.get('name'))
             self.__components.append(component)
