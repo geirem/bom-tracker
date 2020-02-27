@@ -23,7 +23,7 @@ class Reporter:
             )
         self.__base_url = base_url
         self.__headers = {
-            'X-Api-Key': environ['TRACK_TOKEN'],
+            'X-Api-Key': environ['TRACK_TOKEN'].strip(),
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }
