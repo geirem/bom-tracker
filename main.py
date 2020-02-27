@@ -1,4 +1,5 @@
 import os
+from os import path
 
 from lib.BlockerChecker import BlockerChecker
 from lib.Bom import Bom
@@ -7,12 +8,16 @@ from lib.Reporter import Reporter
 
 
 def check_for_blockers(bom_file: str) -> bool:
+    if not path.exists('/app/config/blockers.json'):
+        print('DEBUG: No embedded blockers list.')
+        return True
+    print('DEBUG: Checking for critical vulnerabilities against embedded list.')
     bom = Bom(bom_file).parse()
     blocker_file = 'config/blockers.json'
     blocker_checker = BlockerChecker(blocker_file)
     blockers = blocker_checker.check(bom.get_components())
     if blockers:
-        print('Some dependencies are vulnerable - failing the build:')
+        print('Dependencies with critical vulnerabilities found:')
         print(blockers)
         if 'TRACK_INFO_PAGE' in os.environ:
             print(f'See {os.environ["TRACK_INFO_PAGE"]} for more details and how to solve this.')
