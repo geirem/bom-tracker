@@ -7,14 +7,13 @@ from lib.Project import Project
 from lib.Reporter import Reporter
 
 
-def check_for_blockers(bom_file: str) -> bool:
-    if not path.exists('/app/config/blockers.json'):
+def check_for_blockers(bom_file: str, blockers_file: str) -> bool:
+    if not path.exists(blockers_file):
         print('DEBUG: No embedded blockers list.')
         return True
     print('DEBUG: Checking for critical vulnerabilities against embedded list.')
     bom = Bom(bom_file).parse()
-    blocker_file = 'config/blockers.json'
-    blocker_checker = BlockerChecker(blocker_file)
+    blocker_checker = BlockerChecker(blockers_file)
     blockers = blocker_checker.check(bom.get_components())
     if blockers:
         print('Dependencies with critical vulnerabilities found:')
@@ -36,7 +35,8 @@ def report_bom(track_host: str, bom_file: str) -> None:
 # other errors are suppressed.
 def main() -> None:
     bom_file = 'bom.xml'
-    if not check_for_blockers(bom_file):
+    blockers_file = '/app/config/blockers.json'
+    if not check_for_blockers(bom_file, blockers_file):
         exit(1)
     try:
         report_bom(os.environ['TRACK_HOST'], bom_file)
