@@ -27,6 +27,26 @@ class Reporter:
     def __assemble_url(self, local_part: str) -> str:
         return self.__base_url + local_part
 
+    def ensure_project_exists(self) -> None:
+        data = {
+            'name': self.__project.get_name(),
+            'version': self.__project.get_version(),
+        }
+        response = requests.put(
+            self.__assemble_url('/project/lookup'), data=data, headers=self.__headers
+        )
+        if response.status_code == 200:
+            return
+        data['tags'] = [
+            {'name': 'untracked_dependencies'}
+        ]
+        response = requests.put(
+            self.__assemble_url('/project'), data=json.dumps(data), headers=self.__headers
+        )
+        if response.status_code == 201:
+            return
+        raise TrackCallException()
+
     def send_bom(self, bom_file: str) -> None:
         with open(bom_file, 'r') as inimage:
             bom_data = base64.b64encode(inimage.read().encode('utf-8')).decode('ascii').replace('\n', '')
