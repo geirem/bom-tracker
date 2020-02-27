@@ -31,10 +31,7 @@ def report_bom(bom_file: str) -> None:
 # Only positive finds in the blocking file should break the build.  All
 # other errors are suppressed.
 def main() -> None:
-    print('ls:')
-    for f in os.listdir("path"):
-        print(f'\t{f}')
-    print(f'cwd: {os.getcwd()}')
+    report_worldview()
     bom_file = 'bom.xml'
     if not check_for_blockers(bom_file):
         exit(1)
@@ -42,6 +39,17 @@ def main() -> None:
         report_bom(bom_file)
     except Exception as err:
         print(err)
+
+
+def report_worldview():
+    print('env:')
+    for k, v in os.environ.items():
+        print(f'\t{k}:{v}')
+    cwd = os.getcwd()
+    print(f'cwd: {cwd}')
+    print('ls:')
+    for f in os.listdir(cwd):
+        print(f'\t{f}')
 
 
 if __name__ == "__main__":
