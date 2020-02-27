@@ -1,17 +1,12 @@
 import base64
 import json
 from os import environ
-import logging
 
 import requests as requests
 
 from lib.Project import Project
 from lib.exceptions.ConfigurationException import ConfigurationException
 from lib.exceptions.TrackCallException import TrackCallException
-
-
-# TODO: REMOVE TEST SCAFFOLDING.
-logging.basicConfig(level=logging.DEBUG)
 
 
 class Reporter:
